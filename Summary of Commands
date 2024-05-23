@@ -1,0 +1,29 @@
+1.Download and Install XAMPP:
+Visit the XAMPP official website and download XAMPP for your operating system.
+Install XAMPP and open the XAMPP Control Panel.
+
+2.Start Apache and MySQL:
+Open the XAMPP Control Panel.
+Click the Start button next to Apache.
+Click the Start button next to MySQL.
+
+3.Open phpMyAdmin:
+In the XAMPP Control Panel, click the Admin button next to MySQL to open phpMyAdmin.
+Create Database and Tables:
+
+4.In phpMyAdmin, create a new database.
+Use the SQL tab or the interface to create the necessary tables as specified in your AdminRoute.js file.
+
+// Running the  Server and Front-End
+
+1.Open VS Code:
+Open your project directory in VS Code.
+
+
+# In the first terminal (for the server)
+cd server
+npm start
+
+# In the second terminal (for the front-end)
+cd front
+npm run dev
