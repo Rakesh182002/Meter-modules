@@ -1,0 +1,12 @@
+.loginPage {
+    /* background: url('Images/employeems.jpeg'); */
+    background-image: radial-gradient(circle at 73% 14%, rgba(160, 160, 160,0.05) 0%, rgba(160, 160, 160,0.05) 50%,rgba(27, 27, 27,0.05) 50%, rgba(27, 27, 27,0.05) 100%),radial-gradient(circle at 22% 0%, rgba(251, 251, 251,0.05) 0%, rgba(251, 251, 251,0.05) 50%,rgba(219, 219, 219,0.05) 50%, rgba(219, 219, 219,0.05) 100%),radial-gradient(circle at 89% 57%, rgba(49, 49, 49,0.05) 0%, rgba(49, 49, 49,0.05) 50%,rgba(206, 206, 206,0.05) 50%, rgba(206, 206, 206,0.05) 100%),linear-gradient(90deg, rgb(238, 131, 122),rgb(184, 12, 194));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 120%;
+}
+
+.loginForm {
+    background-color: rgba(154, 155, 158, 0.6);
+    color: white;
+}
