@@ -472,8 +472,6 @@ a,button {
     color: rgb(237, 75, 75); /* Optional: Change color to red to highlight the asterisk */
     font-weight: bold; /* Optional: Make the asterisk bold */
 }
- 
- /* ////////////////////////////////////////  */
 
 .search-label::after{
 content: " ";

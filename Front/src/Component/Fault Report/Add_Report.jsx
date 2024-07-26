@@ -17,8 +17,7 @@ const Add_Report = () => {
         requestor_name:"",
         requestor_contact:"",        
         description:"",
-        image:"",
-        created_at: new Date().toISOString(),
+        image:null
     })
 
         const [school, setschool] = useState([]);
@@ -37,10 +36,6 @@ const Add_Report = () => {
           .catch((err) => console.log(err));
 
         }, []);
-    
-
-
-    
 
       //Submit Operation
     const handleSubmit = (e) =>{
@@ -121,7 +116,7 @@ const Add_Report = () => {
                                                                                 </select>
                                                                             </div>
 
-                                                                            <div className="col-12 ">
+                                                                            <div className="col-12 mb-4 ">
                                                                                 <label htmlFor="priority" className="form-label">
                                                                                     Priority :
                                                                                 </label>
@@ -137,6 +132,36 @@ const Add_Report = () => {
                                                                                     <option value="Low">Low</option>
                                                                                     <option value="Medium">Medium</option>
                                                                                     <option value="High">High</option>
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <div className="col-12">
+                                                                                <label htmlFor="droup_down" className="form-label">
+                                                                                which equipment from drop down :
+                                                                                </label>
+                                                                                <select 
+                                                                                    required
+                                                                                    id="droup_down"
+                                                                                    className="form-select"
+                                                                                    onChange={(e) =>
+                                                                                        setFaultreport({ ...faultreport, droup_down: e.target.value })
+                                                                                    }
+                                                                                >
+                                                                                    
+                                                                                    <option selected disabled> Select equipment</option>
+                                                                                    <option value="Fan System">Fan System</option>
+                                                                                    <option value="Light fitting and accessories">Light fitting and accessories</option>
+                                                                                    <option value="Dryer system">Dryer system</option>
+                                                                                    <option value="Electrical installation ( LOW)">Electrical installation ( LOW)</option>
+                                                                                    <option value="Switchboard">Switchboard</option>
+                                                                                    <option value="LPS">LPS</option>
+                                                                                    <option value="ACMV System">ACMV System</option>
+                                                                                    <option value="">Automatic/Motorised Gates/Roller Shutters</option>
+                                                                                    <option value="Fresh Air / Extraction Systems">Fresh Air / Extraction Systems</option>
+                                                                                    <option value="Synthetic Field Water Sprinkler System">Synthetic Field Water Sprinkler System</option>
+                                                                                    <option value="Stomwater Detection Tank System">Stomwater Detection Tank System</option>
+                                                                                    <option value="Carpark Barrier">Carpark Barrier</option>
+                                                                                    <option value="Automatic Irrigation System">Automatic Irrigation System</option>
                                                                                 </select>
                                                                             </div>
                                                                             
@@ -258,35 +283,8 @@ const Add_Report = () => {
                                                                             </div>
                                                                             
 
-                                                                            <div className="col-12">
-                                                                                <label htmlFor="droup_down" className="form-label">
-                                                                                which equipment from drop down :
-                                                                                </label>
-                                                                                <select 
-                                                                                    required
-                                                                                    id="droup_down"
-                                                                                    className="form-select"
-                                                                                    onChange={(e) =>
-                                                                                        setFaultreport({ ...faultreport, droup_down: e.target.value })
-                                                                                    }
-                                                                                >
                                                                                     
-                                                                                    <option selected disabled> Select equipment</option>
-                                                                                    <option value="Fan System">Fan System</option>
-                                                                                    <option value="Light fitting and accessories">Light fitting and accessories</option>
-                                                                                    <option value="Dryer system">Dryer system</option>
-                                                                                    <option value="Electrical installation ( LOW)">Electrical installation ( LOW)</option>
-                                                                                    <option value="Switchboard">Switchboard</option>
-                                                                                    <option value="LPS">LPS</option>
-                                                                                    <option value="ACMV System">ACMV System</option>
-                                                                                    <option value="">Automatic/Motorised Gates/Roller Shutters</option>
-                                                                                    <option value="Fresh Air / Extraction Systems">Fresh Air / Extraction Systems</option>
-                                                                                    <option value="Synthetic Field Water Sprinkler System">Synthetic Field Water Sprinkler System</option>
-                                                                                    <option value="Stomwater Detection Tank System">Stomwater Detection Tank System</option>
-                                                                                    <option value="Carpark Barrier">Carpark Barrier</option>
-                                                                                    <option value="Automatic Irrigation System">Automatic Irrigation System</option>
-                                                                                </select>
-                                                                            </div>                                                                        </div>
+                                                                     </div>
 
                                                                         <div className='form-control p-4 '>
 

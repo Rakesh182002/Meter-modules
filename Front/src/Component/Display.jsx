@@ -52,6 +52,14 @@ const Display = () => {
                               <Link to="/display/report"> Fault Report </Link>
                             </li>
                            
+                            <li>
+                              <Link to="/display/location"> Location </Link>
+                            </li>
+                           
+                            <li>
+                              <Link to="/display/generate"> QR Generator </Link>
+                            </li>
+                           
                           </ul>
                        
                         </div>

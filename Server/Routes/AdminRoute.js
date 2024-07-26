@@ -354,7 +354,6 @@ router.put('/edit_attendance/:id', (req, res) => {
 router.delete('/delete_attendance/:id', (req, res) => {
     const id = req.params.id;
     const sql = "delete from attendance where id = ?"
-    console.log(sql) 
     con.query(sql,[id], (err, result) => {
         if(err) return res.json({Status: false, Error: "Query Error"+err})
         return res.json({Status: true, Result: result})
@@ -395,11 +394,10 @@ router.post('/add_request', faultreportimg.single('image'), (req, res) => {
         req.body.requestor_name,        
         req.body.requestor_contact,        
         req.body.description, 
-        req.file.filename, // Access uploaded file using req.file
-        req.body.created_at, 
+        req.file? req.file.filename : null,// Access uploaded file using req.file
+        new Date().toISOString() // Set created_at to the current date and time
 
     ];
-    console.log(req.body.created_at)  
         
     con.query(sql, values, (err, result) => {
         if (err) return res.json({ Status: false, Error: err });
