@@ -20,7 +20,7 @@ const Add_Reading = () => {
  
 useEffect(() => {
     //Get Meter Table 
-    axios.get(`http://localhost:3000/auth/meter/${id}`)
+    axios.get(`http://localhost:3000/meter/meter/${id}`)
     .then(result => {
         const firstResult = result.data.Result[0];
         if (firstResult) {
@@ -55,7 +55,7 @@ const handleSubmit = (e) => {
       formData.append("image", mreading.image);
       formData.append("meter_id", mreading.meter_id);
 
-      axios.post("http://localhost:3000/auth/add_readings", formData)
+      axios.post("http://localhost:3000/reading/add_readings", formData)
           .then((result) => {
             if (result.data.Status) {
 
@@ -112,7 +112,7 @@ return (
                                           }
                                 />
                                 <div class="input-append">
-                                  <label class="input-group-text bg-transparent border-0" for="inputGroupSelect02"> {meter.meter_unit}  </label>
+                                  <label class="input-group-text bg-transparent border-0 search-label" for="inputGroupSelect02"> {meter.meter_unit}  </label>
                                 </div>
                                 </div>
                             </div>

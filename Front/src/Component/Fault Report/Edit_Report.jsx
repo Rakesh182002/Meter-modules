@@ -35,7 +35,7 @@ const Edit_Report = () => {
         })
         .catch((err) => console.log(err));
 
-        axios.get(`http://localhost:3000/auth/report/${id}`)
+        axios.get(`http://localhost:3000/report/report/${id}`)
             .then(result => {
                 // const report = result.data.Result[0];
                 setFaultreport({
@@ -65,10 +65,13 @@ const Edit_Report = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.put(`http://localhost:3000/auth/request/${id}`, faultreport)
+        axios.put(`http://localhost:3000/report/request/${id}`, faultreport)
             .then(result => {
                 if (result.data.Status) {
                     navigate('/display/report');
+                    setTimeout(() => {
+                        alert('Updated Successfully');
+                      }, 300);
                 } else {
                     alert(result.data.Error);
                 }
@@ -317,7 +320,7 @@ const Edit_Report = () => {
                                                                         </div>
                                                                         <div className="col-12">
                                                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                                                <button className="btn btn-success me-md-2" type="submit">Save</button>
+                                                                                <button className="btn btn-success me-md-2" type="submit">Update</button>
                                                                                 <button className="btn btn-danger" onClick={() => navigate(-1)} type="button">Back</button>
                                                                             </div>
                                                                         </div>

@@ -13,7 +13,7 @@ const Report = () => {
 
   // Fetch fault reports from the server
   useEffect(() => {    
-    axios.get('http://localhost:3000/auth/report')
+    axios.get('http://localhost:3000/report/report')
       .then(response => {
         setFaultreport(response.data.data);
         setFilterRequest(response.data.data);
@@ -33,7 +33,7 @@ const Report = () => {
 
   // Delete a fault report
   const handleDelete = (id) => {    
-    axios.delete('http://localhost:3000/auth/delete_request/' + id)
+    axios.delete('http://localhost:3000/report/delete_request/' + id)
       .then(result => {
         if (result.data.Status) {
           const updatedFaultReport = faultreport.filter(item => item.id !== id);
@@ -134,7 +134,13 @@ const Report = () => {
                                         <div className="content">
                                           <span className="text-secondary">Zone</span>
                                           <span>{item.zone}</span>
+                                        </div> 
+                                        
+                                        <div className="content">
+                                          <span className="text-secondary">Reported </span>
+                                          <span  className="text-primary">{item.report_said}</span>
                                         </div>
+                                      
                                       
                                       </div>
                                     </div>
@@ -230,6 +236,10 @@ const Report = () => {
                                       <li>
                                         <span>Request Contact Number</span>
                                         <span>{selectedItem.requestor_contact}</span>
+                                      </li>
+                                      <li>
+                                        <span>Reported </span>
+                                        <span>{selectedItem.report_said}</span>
                                       </li>
                                     </ul>
                                     <div role="separator" className="ant-divider ant-divider-horizontal ant-divider-with-text-center" fragment="ed93cefd1e">

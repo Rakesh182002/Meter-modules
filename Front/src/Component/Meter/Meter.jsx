@@ -12,7 +12,7 @@ const Meter = () => {
   useEffect(() => {
 
     //Get Meter Table
-    axios.get("http://localhost:3000/auth/meter")
+    axios.get("http://localhost:3000/meter/meter")
       .then((result) => {
         if (result.data.Status) {
           setMeter(result.data.Result);
@@ -29,7 +29,7 @@ const Meter = () => {
   
   // Delete Operation
   const handleDelete = (id) => {
-    axios.delete('http://localhost:3000/auth/delete_meter/'+id)
+    axios.delete('http://localhost:3000/meter/delete_meter/'+id)
     .then(result => {
         if(result.data.Status) {
             // Remove the deleted item from state instead of reloading window
@@ -92,6 +92,7 @@ const Meter = () => {
                                   <th>Zone</th>
                                   <th>Block</th>
                                   <th>Warranty Till</th>
+
                                   <th>Action</th>
                                 </tr>
                               </thead>
@@ -103,8 +104,10 @@ const Meter = () => {
                                       <br/>
                                       <b className="fw-medium">Asset id :</b>{e.asset_id}
                                     </td> 
+                                    {/* <td>{e.image}</td> */}
+                                    {/* <td><img src={`http://localhost:3000/${e.image}`} alt=" Image"  /></td> */}
                                     <td>{e.meter_unit}
-                                    {/* <img src={`http://localhost:3000/${e.image}`} alt=" Image"  /> */}
+                                    
                                       </td>
                                     <td>{e.zone}</td>
                                     <td>{e.block}</td>

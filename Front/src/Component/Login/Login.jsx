@@ -36,12 +36,12 @@ const Login = () => {
             <h2>Login Page</h2>
             <form onSubmit={handleSubmit}>
                 <div className='mb-3'>
-                    <label htmlFor="email"><strong>Email:</strong></label>
+                    <label htmlFor="email" className='search-label'><strong>Email:</strong></label>
                     <input type="email" name='email' autoComplete='off' placeholder='Enter Email'
                      onChange={(e) => setValues({...values, email : e.target.value})} className='form-control rounded-0'/>
                 </div>
                 <div className='mb-3'> 
-                    <label htmlFor="password"><strong>Password:</strong></label>
+                    <label htmlFor="password" className='search-label'><strong>Password:</strong></label>
                     <input type="password" name='password' placeholder='Enter Password'
                      onChange={(e) => setValues({...values, password : e.target.value})} className='form-control rounded-0'/>
                 </div>

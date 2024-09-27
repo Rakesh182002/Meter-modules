@@ -3,6 +3,7 @@ import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import multer from "multer";
 import path from "path";
+import cron from 'node-cron'
 
 
 const router = express.Router();
@@ -57,207 +58,29 @@ router.get('/asset', (req, res) => {
 
                         //! Meter
 
-// image upload 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'Public/Images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-    }
-})
-const upload = multer({
-    storage: storage
-})
-
-// Add-Meter ==>
-
-router.post('/add_meter', upload.single('image'), (req, res) => {
-    const sql = `INSERT INTO meter 
-    (meter_name, meter_unit, zone, school, warranty_till, install_on, asset_id, asset_location,block,level, image) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [
-        req.body.meter_name,
-        req.body.meter_unit,        
-        req.body.zone,        
-        req.body.school,
-        req.body.warranty_till,
-        req.body.install_on, 
-        req.body.asset_id,
-        req.body.asset_location,
-        req.body.block,
-        req.body.level,
-        req.file.filename,
-    ];
-    con.query(sql, values, (err, result) => {
-        if (err) return res.json({ Status: false, Error: err });
-        return res.json({ Status: true });
-    });
-});
-
-
-router.get('/meter', (req, res) => {
-    const sql = "SELECT * FROM meter";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-// Edit Meter ==>
-
-router.get('/meter/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM meter WHERE id = ?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-router.put('/edit_meter/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = `UPDATE meter 
-        set  meter_name = ?,meter_unit = ?, zone = ?, school = ?, install_on = ?, warranty_till= ?, asset_id = ?, asset_location = ?, block= ?, level = ?
-        Where id = ?`
-    const values = [
-        req.body.meter_name,
-        req.body.meter_unit,
-        req.body.zone,
-        req.body.school,
-        req.body.install_on, 
-        req.body.warranty_till,        
-        req.body.asset_id,
-        req.body.asset_location,
-        req.body.block,
-        req.body.level,
-    ]
-    con.query(sql,[...values, id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-
-//  Deleter Meter ==>
-
-router.delete('/delete_meter/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "delete from meter where id = ?"
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
-
 //////////////////////////////////////////////////////////////////
 
                             //! Reading
 
 
-// image upload 
-
-const imageStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'Public/Images');
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-    }
-});
-
-const imageUpload = multer({
-    storage: imageStorage
-});
-
-// module.exports = imageUpload;
-
-
-
-// Add-Reading ==>
-
-router.post('/add_readings', imageUpload.single('image'), (req, res) => {
-    
-    const sql = `INSERT INTO  mreading
-    (meter_name, meter_reading, meter_unit, update_on, update_by, image, meter_id) 
-    VALUES ( ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [
-        req.body.meter_name,
-        req.body.meter_reading,
-        req.body.meter_unit,
-        req.body.update_on,
-        req.body.update_by,
-        req.file.filename,
-        req.body.meter_id
-    ];   
-    con.query(sql,values, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result});
-    })
-});
-
-
-router.get('/meter_reading/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM meter WHERE id = ?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-//  Fetch Reading  *
-router .get('/readings/:id',(req,res)=>{
-    const id = req.params.id;
-    const sql = "SELECT * FROM mreading where meter_id=?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-// Edit Reading 
-
-router.get('/reading/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM mreading WHERE reading_id = ?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-router.put('/edit_reading/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = `UPDATE mreading 
-        set meter_reading = ?, update_on = ?, update_by = ?
-        Where reading_id = ?`
-    const values = [
-        req.body.meter_reading,
-        req.body.update_on,
-        req.body.update_by, 
-    ]
-    con.query(sql,[...values, id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-//  Delete Reading
-
-router.delete('/delete_reading/:reading_id', (req, res) => {
-    const id = req.params.reading_id;
-    const sql = "DELETE FROM mreading WHERE reading_id = ?";
-    // console.log(sql); // For debugging purposes
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-
 /////////////////////////////////////////////////////////////
                             //! School 
+
+router.post('/add_school', (req, res) => {
+    const sql = `INSERT INTO school (zone, school_name,address) VALUES (?, ?, ?)`;
+    const values = [       
+        req.body.zone,        
+        req.body.school_name,
+        req.body.address
+    ];
+    console.log(req.body)  
+        
+    con.query(sql, values, (err, result) => {
+        if (err) return res.json({ Status: false, Error: err });
+        
+        return res.json({ Status: true });
+    });
+});
 
 router.get('/school', (req, res) => {
     const sql = "SELECT  * from school ";
@@ -268,80 +91,27 @@ router.get('/school', (req, res) => {
 })
 
 
-//////////////////////////////////////////////////////////
-                                // !Attendance
-
-// Image Upload
-const storageing = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'Public/Images'); // Specify the directory where uploaded files will be stored
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Generate a unique filename for the uploaded file
-    }
-  });
-
-  const uploading = multer({
-    storage: storageing
-    });
-  
-  // Add Attendance
-  router.post('/add_attendance', uploading.single('image'), (req, res) => {
-      const sql = `INSERT INTO attendance 
-      (zone, school, tech_name, checkin, checkout, image) 
-      VALUES (?, ?, ?, ?, ?, ?)`;
-      const values = [
-          req.body.zone,        
-          req.body.school,
-          req.body.tech_name,
-          req.body.checkin,
-          req.body.checkout,
-          req.file.filename, // Access uploaded file using req.file
-      ];
-      
-      con.query(sql, values, (err, result) => {
-          if (err) return res.json({ Status: false, Error: err });
-          return res.json({ Status: true });
-      });
-  });
-
-  router.get('/attendance', (req, res) => {
-    const sql = 'SELECT * FROM attendance';
-  
-    con.query(sql, (err, results) => {
-      if (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ Status: false, Error: 'Error fetching data' });
-      } else {
-        res.status(200).json({ Status: true, data: results });
-      }
-    });
-  });
-
-
-
-//Edit Attendance
-  
-router.get('/attendance/:id', (req, res) => {
+//   Edit School
+  router.get('/school/:id', (req, res) => {
     const id = req.params.id;
-    const sql = "SELECT * FROM attendance WHERE id = ?";
+    const sql = "SELECT * FROM school WHERE id = ?";
     con.query(sql,[id], (err, result) => {
         if(err) return res.json({Status: false, Error: "Query Error"})
         return res.json({Status: true, Result: result})
     })
 })
 
-router.put('/edit_attendance/:id', (req, res) => {
+router.put('/edit_school/:id', (req, res) => {
     const id = req.params.id;
-    const sql = `UPDATE attendance 
-        set  zone = ?, school = ?, tech_name = ?, checkin = ?, checkout= ?
-        Where id = ?`
+    const sql = `UPDATE school
+    SET zone = ?,
+     school_name = ?, 
+     address = ?
+     WHERE id = ?`
     const values = [
-        req.body.zone,        
-        req.body.school,
-        req.body.tech_name,
-        req.body.checkin,
-        req.body.checkout,
+       req.body.zone,
+       req.body.school_name,
+       req.body.address
     ]
     con.query(sql,[...values, id], (err, result) => {
         if(err) return res.json({Status: false, Error: "Query Error"+err})
@@ -349,132 +119,100 @@ router.put('/edit_attendance/:id', (req, res) => {
     })
 })
 
-
-//Delete Attendance
-router.delete('/delete_attendance/:id', (req, res) => {
+//Delete School
+router.delete('/delete_school/:id', (req, res) => {
     const id = req.params.id;
-    const sql = "delete from attendance where id = ?"
-    console.log(sql) 
+    const sql = "delete from school where id = ?"
     con.query(sql,[id], (err, result) => {
         if(err) return res.json({Status: false, Error: "Query Error"+err})
         return res.json({Status: true, Result: result})
     })
 })
+///////////////////////////////////////////////////////////////
+                                //!Location
+
+router.post('/add_location', (req, res) => {
+    
+    const sql = `INSERT INTO  location
+    (locQRID, block, level, room_no, room_name, school_id,school_name) 
+    VALUES ( ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [
+        req.body.locQRID,
+        req.body.block,
+        req.body.level,
+        req.body.room_no,
+        req.body.room_name,
+        req.body.school_id,
+        req.body.school_name
+    ];   
+    con.query(sql,values, (err, result) => {
+        if(err) return res.json({Status: false, Error: "Query Error"+err})
+        return res.json({Status: true, Result: result});
+    })
+});
+
+router.get('/location/:id',(req,res)=>{
+    const id = req.params.id;
+    const sql = "SELECT * FROM location where school_id=?";
+    con.query(sql,[id], (err, result) => {
+        if(err) return res.json({Status: false, Error: "Query Error"})
+        return res.json({Status: true, Result: result})
+    })
+})
+
+// Edit LOCATION 
+
+router.get('/locations/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = "SELECT * FROM location WHERE id = ?";
+    con.query(sql,[id], (err, result) => {
+        if(err) return res.json({Status: false, Error: "Query Error"})
+        return res.json({Status: true, Result: result})
+    })
+})
+
+router.put('/edit_location/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = `UPDATE location 
+        set locQRID = ?, block = ?, level = ? , room_no = ? , room_name = ?
+        Where id = ?`
+    const values = [
+        req.body.locQRID,
+        req.body.block,
+        req.body.level,
+        req.body.room_no,
+        req.body.room_name
+    ]
+    con.query(sql,[...values, id], (err, result) => {
+        if(err) return res.json({Status: false, Error: "Query Error"+err})
+        return res.json({Status: true, Result: result})
+    })
+})
+
+//  Delete LOCATION
+
+router.delete('/delete_location/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = "DELETE FROM location WHERE id = ?";
+    con.query(sql,[id], (err, result) => {
+        if(err) return res.json({Status: false, Error: "Query Error"+err})
+        return res.json({Status: true, Result: result})
+    })
+})
+                                
+                    
+//////////////////////////////////////////////////////////
+                                // !Attendance
+
 
 ///////////////////////////////////////////////////////////////////////////
                 // ! Fault Report
 
-// image upload 
-const faultimg = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'Public/Images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-    }
-})
-const faultreportimg  = multer({
-    storage: faultimg
-})
 
-//   Add Report Fault
-router.post('/add_request', faultreportimg.single('image'), (req, res) => {
-    const sql = `INSERT INTO fault_report 
-    (fault_type, priority, zone, school, block, level, room_number, room_name, droup_down, requestor_name, requestor_contact, description, image, created_at) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [
-        req.body.fault_type,        
-        req.body.priority,        
-        req.body.zone,        
-        req.body.school,      
-        req.body.block,        
-        req.body.level,        
-        req.body.room_number,        
-        req.body.room_name,        
-        req.body.droup_down,        
-        req.body.requestor_name,        
-        req.body.requestor_contact,        
-        req.body.description, 
-        req.file.filename, // Access uploaded file using req.file
-        req.body.created_at, 
-
-    ];
-    console.log(req.body.created_at)  
-        
-    con.query(sql, values, (err, result) => {
-        if (err) return res.json({ Status: false, Error: err });
-        
-        return res.json({ Status: true });
-    });
-});
+////////////////////////////////////////////////////////////////////
+                                //!Booking
 
 
-router.get('/report', (req, res) => {
-    const sql = 'SELECT * FROM fault_report ORDER BY id DESC';  
-    con.query(sql, (err, results) => {
-      if (err) {
-        console.error('Error fetching data:', err);
-        res.status(500).json({ Status: false, Error: 'Error fetching data' });
-      } else {
-        res.status(200).json({ Status: true, data: results });
-      }
-    });
-  });
-
-//   Edit Report Fault
-  router.get('/report/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM fault_report WHERE id = ?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-router.put('/request/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = `UPDATE fault_report
-    SET 
-        fault_type = ?, 
-        priority = ?, 
-        zone = ?, 
-        school = ?, 
-        block = ?, 
-        level = ?, 
-        room_number = ?, 
-        room_name = ?, 
-        droup_down = ?, 
-        requestor_name = ?, 
-        requestor_contact = ?
-    WHERE id = ?`
-    const values = [
-        req.body.fault_type,
-       req.body.priority,
-       req.body.zone,
-       req.body.school,
-       req.body.block,
-       req.body.level,
-       req.body.room_number,
-       req.body.room_name,
-       req.body.droup_down,
-       req.body.requestor_name,
-       req.body.requestor_contact,
-    ]
-    con.query(sql,[...values, id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-//Delete Attendance
-router.delete('/delete_request/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "delete from fault_report where id = ?"
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
 
 // CREATE TABLE admin (
 //     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -523,17 +261,30 @@ router.delete('/delete_request/:id', (req, res) => {
 //     zone VARCHAR(255) NOT NULL,
 //     school VARCHAR(255) NOT NULL,
 //     tech_name VARCHAR(100) NOT NULL,
+//     date DATE not null,
 //     checkin time NOT NULL,
 //     checkout time NOT NULL,
 //     image BLOB
 // );
 
 // CREATE TABLE school (
-//     id INT PRIMARY KEY,
+//     id INT AUTO_INCREMENT PRIMARY KEY,
 //     zone VARCHAR(50) NOT NULL,
 //     school_name VARCHAR(100) NOT NULL,
 //     address VARCHAR(255) NOT NULL
 // );
+
+// CREATE TABLE location (
+//     id INT AUTO_INCREMENT PRIMARY KEY,
+//     locQRID VARCHAR(55) NOT NULL,
+//     block VARCHAR(25) NOT NULL,
+//     level VARCHAR(50) NOT NULL,
+//     room_no VARCHAR(55) NOT NULL,
+//     room_name VARCHAR(155) NOT NULL,
+//     school_name VARCHAR(155) NOT NULL,
+//     school_id INT,
+//     FOREIGN KEY (school_id) REFERENCES school(id)
+//   );
 
 // INSERT INTO school (id, zone, school_name, address) VALUES
 // (1, 'EAST-G1', 'Haig Girls School', '51, Koon Seng Rd,S(427072)'),
@@ -585,7 +336,7 @@ router.delete('/delete_request/:id', (req, res) => {
 // (47, 'EAST-G3', 'Tampines Meridian Junior College', '21, Pasir Ris St 71,S(518799)'),
 // (48, 'EAST-G3', 'Ngee Ann Secondary School', '1, Tampines St 32,S(529283)'),
 // (49, 'EAST-G3', 'Hai Sing Catholic School (Holding @ Former Greenview Secondary School)', '15, Pasir Ris St 21,S(518969)'),
-//(50, 'EAST-G3', 'Temasek Junior College', '2 Tampines Avenue 9, S(529564)');
+// (50, 'EAST-G3', 'Temasek Junior College', '2 Tampines Avenue 9, S(529564)');
 
 
 
@@ -607,6 +358,22 @@ router.delete('/delete_request/:id', (req, res) => {
 //     created_at DATE NOT NULL
 // );
 
+// CREATE TABLE bookings (
+//     id INT AUTO_INCREMENT PRIMARY KEY,
+//     zone VARCHAR(255),
+//     schoolName VARCHAR(255),
+//     block VARCHAR(255),
+//     level VARCHAR(255),
+//     roomNo VARCHAR(255),
+//     roomName VARCHAR(255),
+//     date DATE,
+//     timeStart TIME,
+//     timeEnd TIME,
+//     remarks TEXT,
+//     equipment JSON,
+//     status ENUM('upcoming', 'ongoing', 'completed', 'cancelled ') DEFAULT 'upcoming',
+    
+// );
 
 
 

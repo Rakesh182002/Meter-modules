@@ -1,5 +1,4 @@
 import axios from "axios";
-// import 'main.css'
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
@@ -12,7 +11,7 @@ const Attendance = () => {
   useEffect(() => {
 
     //Get Attendance Table
-    axios.get('http://localhost:3000/auth/attendance')
+    axios.get('http://localhost:3000/attendance/attendance')
       .then(response => {
         setAttendanceData(response.data.data);
         setFilterAttendance(response.data.data);
@@ -26,7 +25,7 @@ const Attendance = () => {
 
 //Delete operation
 const handleDelete = (id) => {
-    axios.delete('http://localhost:3000/auth/delete_attendance/'+id)
+    axios.delete('http://localhost:3000/attendance/delete_attendance/'+id)
     .then(result => {
         if(result.data.Status) {
             // Remove the deleted item from state instead of reloading window
@@ -85,6 +84,8 @@ return (
                                     <th>Zone</th>
                                     <th>School</th>
                                     <th>Technician Name</th>
+                                    <th>Date</th>
+                                    <th>Image</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
                                     <th>Action</th>
@@ -96,6 +97,8 @@ return (
                                       <td>{attendance.zone}</td>
                                       <td>{attendance.school}</td>
                                       <td>{attendance.tech_name}</td>
+                                      <td><img src={attendance.image} alt="image" /></td>
+                                      <td>{new Date(attendance.date).toLocaleDateString('en-GB')}</td>
                                       <td>{attendance.checkin}</td>
                                       <td>{attendance.checkout}</td>
                                       <td>

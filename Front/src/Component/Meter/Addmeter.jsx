@@ -64,7 +64,7 @@ const AddMeter = () => {
         formData.append("level", meter.level);
         formData.append("image", meter.image);
 
-        axios.post("http://localhost:3000/auth/add_meter", formData)
+        axios.post("http://localhost:3000/meter/add_meter", formData)
             .then((result) => {
                 if (result.data.Status) {
                     navigate('/display');

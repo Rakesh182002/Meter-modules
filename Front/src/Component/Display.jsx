@@ -49,8 +49,24 @@ const Display = () => {
                             </li>
 
                             <li>
-                              <Link to="/display/report"> Fault Report </Link>
+                              <Link to="/display/school"> School </Link>
                             </li>
+
+
+                            <li>
+                              <Link to="/display/report"> Fault Report </Link>
+                            </li> 
+
+                            <li>
+                              <Link to="/display/space_management"> Booking Management </Link>
+                            </li>
+                            
+                           
+                            <li>
+                              <Link to="/display/iaq"> IAQ Transcation </Link>
+                            </li>
+                            
+                           
                            
                           </ul>
                        

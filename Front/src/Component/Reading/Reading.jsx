@@ -13,7 +13,7 @@ const Reading = () => {
   useEffect(() => {
 
       //Get Reading Table
-    axios.get(`http://localhost:3000/auth/readings/${id}`)
+    axios.get(`http://localhost:3000/reading/readings/${id}`)
           .then((result) => {
             if (result.data.Status) {
               setReading(result.data.Result);
@@ -28,7 +28,7 @@ const Reading = () => {
     });
 
     // Get Meter Table
-    axios.get(`http://localhost:3000/auth/meter/${id}`)
+    axios.get(`http://localhost:3000/meter/meter/${id}`)
     .then(result => {
         const firstResult = result.data.Result[0];
         if (firstResult) {
@@ -47,7 +47,7 @@ const Reading = () => {
   // Delete operation
   
   const handleDelete = (reading_id) => {
-    axios.delete(`http://localhost:3000/auth/delete_reading/${reading_id}`)
+    axios.delete(`http://localhost:3000/reading/delete_reading/${reading_id}`)
     .then(result => {
         if(result.data.Status) {
             setReading(mreading.filter(item => item.reading_id !== reading_id));

@@ -1,100 +1,108 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';  // Import dayjs to handle date formatting
 
 const EditMeter = () => {
-
-const { id } = useParams();
-const [meter, setMeter] = useState({
+  const { id } = useParams();
+  const [meter, setMeter] = useState({
     meter_name: "",
     meter_unit: "",
-    zone:"",
-    school:"",
+    zone: "",
+    school: "",
     install_on: "",
     warranty_till: "",
     asset_id: "",
     asset_location: "",
-});
+    block: "",
+    level: ""
+  });
 
-const [school, setschool] = useState([]);
-const [category, setCategory] = useState([]);
+  const [schools, setSchools] = useState([]);
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
-useEffect(() => {
-
-    //Get School Table
-  axios.get("http://localhost:3000/auth/school")
+  useEffect(() => {
+    // Fetch School data
+    axios.get("http://localhost:3000/auth/school")
       .then((result) => {
-          if (result.data.Status) {
-            setschool(result.data.Result);
-          } else {
-            alert(result.data.Error);
-          }
+        if (result.data.Status) {
+          setSchools(result.data.Result);
+        } else {
+          alert(result.data.Error);
+        }
       })
       .catch((err) => console.log(err));
 
-      //Get Asset Table
+    // Fetch Asset data
     axios.get('http://localhost:3000/auth/asset')
       .then(result => {
         if (result.data.Status) {
-          setCategory(result.data.Result);
+          setCategories(result.data.Result);
         } else {
           alert(result.data.Error);
         }
       }).catch(err => console.log(err));
 
-     //Get meter Table
-    axios.get(`http://localhost:3000/auth/meter/${id}`)
+    // Fetch Meter data
+    axios.get(`http://localhost:3000/meter/meter/${id}`)
       .then(result => {
+        const fetchedMeter = result.data.Result[0];
         setMeter({
           ...meter,
-          meter_name: result.data.Result[0].meter_name,
-          meter_unit: result.data.Result[0].meter_unit,
-          zone: result.data.Result[0].zone,
-          school: result.data.Result[0].school,
-          install_on : result.data.Result[0].install_on,
-          warranty_till : result.data.Result[0].warranty_till,          
-          asset_id : result.data.Result[0].asset_id,
-          asset_location : result.data.Result[0].asset_location,
-          block:result.data.Result[0].block,
-          level:result.data.Result[0].level,
+          meter_name: fetchedMeter.meter_name,
+          meter_unit: fetchedMeter.meter_unit,
+          zone: fetchedMeter.zone,
+          school: fetchedMeter.school,
+          install_on: fetchedMeter.install_on ? dayjs(fetchedMeter.install_on).format('YYYY-MM-DD') : "",
+          warranty_till: fetchedMeter.warranty_till ? dayjs(fetchedMeter.warranty_till).format('YYYY-MM-DD') : "",
+          asset_id: fetchedMeter.asset_id,
+          asset_location: fetchedMeter.asset_location,
+          block: fetchedMeter.block,
+          level: fetchedMeter.level
         });
-      }).catch(err => console.log(err));
-  }, []);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
 
-
-  //Submit Operation
-const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:3000/auth/edit_meter/${id}`, meter)
+    const formattedMeter = {
+      ...meter,
+      install_on: meter.install_on ? dayjs(meter.install_on).format('YYYY-MM-DD') : "",
+      warranty_till: meter.warranty_till ? dayjs(meter.warranty_till).format('YYYY-MM-DD') : ""
+    };
+
+    axios.put(`http://localhost:3000/meter/edit_meter/${id}`, formattedMeter)
       .then(result => {
         if (result.data.Status) {
           navigate('/display');
-                    setTimeout(() => {
-                        alert('update Successfully');
-                    }, 300);
+          setTimeout(() => {
+            alert('Updated Successfully');
+          }, 300);
         } else {
           alert(result.data.Error);
         }
       }).catch(err => console.log(err));
-};
+  };
 
-return (
+  return (
     <div id="page-wrapper">
-      <div class="app-inner-layout app-inner-layout-page">
-        <div class="app-inner-layout__wrapper">
-          <div class="app-inner-layout__content pt-1">
-            <div class="tab-content">
-              <div class="container-fluid">
-                <section class="content-header">
-                  <h4> Meter List</h4>
+      <div className="app-inner-layout app-inner-layout-page">
+        <div className="app-inner-layout__wrapper">
+          <div className="app-inner-layout__content pt-1">
+            <div className="tab-content">
+              <div className="container-fluid">
+                <section className="content-header">
+                  <h4>Meter List</h4>
                 </section>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="main-card mb-3 card">
-                      <div class="card-body">
-                        <div class="box-body">
-                          <div class="dataTables_wrapper">
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="main-card mb-3 card">
+                      <div className="card-body">
+                        <div className="box-body">
+                          <div className="dataTables_wrapper">
                             <div className="container">
                               <div className="row justify-content-center">
                                 <div className="col-md-9">
@@ -102,14 +110,12 @@ return (
                                     <h3 className="text-secondary text-center">Edit Meter</h3>
                                     <form className="row g-1" onSubmit={handleSubmit}>
                                       <div className="col-12">
-                                        <label for="inputName" className="form-label">
-                                          Meter Name
-                                        </label>
+                                        <label htmlFor="inputName" className="form-label">Meter Name</label>
                                         <input
                                           type="text"
                                           className="form-control rounded-0"
                                           id="inputName"
-                                          placeholder="Enter meter Name"
+                                          placeholder="Enter Meter Name"
                                           value={meter.meter_name}
                                           onChange={(e) =>
                                             setMeter({ ...meter, meter_name: e.target.value })
@@ -118,14 +124,12 @@ return (
                                       </div>
 
                                       <div className="col-12">
-                                        <label for="inputType" className="form-label">
-                                          Meter Type
-                                        </label>
+                                        <label htmlFor="inputType" className="form-label">Meter Type</label>
                                         <input
                                           type="text"
                                           className="form-control rounded-0"
                                           id="inputType"
-                                          placeholder="Enter meter Type"
+                                          placeholder="Enter Meter Type"
                                           value={meter.meter_unit}
                                           onChange={(e) =>
                                             setMeter({ ...meter, meter_unit: e.target.value })
@@ -134,110 +138,91 @@ return (
                                       </div>
 
                                       <div className="col-12">
-                                          <label htmlFor="inputzone" className="form-label">
-                                             Zone :
-                                          </label>
-                                          <select
-                                              name="inputzone"
-                                              id="inputzone"
-                                              className="form-select"
-                                              required
-                                              value={meter.zone}
-                                              onChange={(e) => setMeter({ ...meter, zone: e.target.value })}
-                                          >
-                                              <option selected disabled value="">Choose Zone</option>
-                                              {school.map((c) => (
-                                                  <option key={c.id} value={c.zone}>
-                                                      {c.zone}
-                                                  </option>
-                                              ))}
-                                          </select>
+                                        <label htmlFor="inputZone" className="form-label">Zone</label>
+                                        <select
+                                          id="inputZone"
+                                          className="form-select"
+                                          value={meter.zone}
+                                          onChange={(e) => setMeter({ ...meter, zone: e.target.value })}
+                                          required
+                                        >
+                                          <option value="">Choose Zone</option>
+                                          {schools.map((s) => (
+                                            <option key={s.id} value={s.zone}>
+                                              {s.zone}
+                                            </option>
+                                          ))}
+                                        </select>
                                       </div>
 
                                       <div className="col-12">
-                                          <label htmlFor="inputschool" className="form-label">
-                                             School Name :
-                                          </label>
-                                          <select
-                                              name="inputschool"
-                                              id="inputschool"
-                                              className="form-select"
-                                              required
-                                              value={meter.school}
-                                              onChange={(e) => setMeter({ ...meter, school: e.target.value })}
-                                          >
-                                              <option selected disabled value="">Choose school</option>
-                                              {school.map((c) => (
-                                                  <option key={c.id} value={c.school_name}>
-                                                      {c.school_name}
-                                                  </option>
-                                              ))}
-                                          </select>
+                                        <label htmlFor="inputSchool" className="form-label">School Name</label>
+                                        <select
+                                          id="inputSchool"
+                                          className="form-select"
+                                          value={meter.school}
+                                          onChange={(e) => setMeter({ ...meter, school: e.target.value })}
+                                          required
+                                        >
+                                          <option value="">Choose School</option>
+                                          {schools.map((s) => (
+                                            <option key={s.id} value={s.school_name}>
+                                              {s.school_name}
+                                            </option>
+                                          ))}
+                                        </select>
                                       </div>
 
                                       <div className="col-12">
-                                        <label for="inputLocation" className="form-label">
-                                          Install
-                                        </label>
+                                        <label htmlFor="inputInstall" className="form-label">Install</label>
                                         <input
                                           type="date"
                                           className="form-control rounded-0"
-                                          id="inputLocation"
-                                          autoComplete="off"
-                                          value={meter.install_on ? new Date(meter.install_on).toISOString().split('T')[0] : ""}
+                                          id="inputInstall"
+                                          value={meter.install_on}
                                           onChange={(e) =>
-                                            setMeter({ ...meter, install: e.target.value })
+                                            setMeter({ ...meter, install_on: e.target.value })
                                           }
                                         />
                                       </div>
 
                                       <div className="col-12">
-                                          <label htmlFor="inputLocation" className="form-label">
-                                              Warranty till
-                                          </label>
-                                          <input
-                                              type="date"
-                                              className="form-control rounded-0"
-                                              id="inputLocation"
-                                              autoComplete="off"
-                                              value={meter.warranty_till ? new Date(meter.warranty_till).toISOString().split('T')[0] : ""}
-                                              onChange={(e) =>
-                                                  setMeter({ ...meter, warranty_till: e.target.value })
-                                              }
-                                          />
+                                        <label htmlFor="inputWarranty" className="form-label">Warranty Till</label>
+                                        <input
+                                          type="date"
+                                          className="form-control rounded-0"
+                                          id="inputWarranty"
+                                          value={meter.warranty_till}
+                                          onChange={(e) =>
+                                            setMeter({ ...meter, warranty_till: e.target.value })
+                                          }
+                                        />
                                       </div>
 
                                       <div className="col-12">
-                                        <label for="category" className="form-label">
-                                          Link to Asset Id (Equipment)
-                                        </label>
+                                        <label htmlFor="inputCategory" className="form-label">Link to Asset ID (Equipment)</label>
                                         <select
-                                          name="category"
-                                          id="category"
+                                          id="inputCategory"
                                           className="form-select"
                                           value={meter.asset_id}
-                                          onChange={(e) =>
-                                            setMeter({ ...meter, asset_id: e.target.value })
-                                          }
+                                          onChange={(e) => setMeter({ ...meter, asset_id: e.target.value })}
                                         >
-                                        <option selected disabled value="">Choose Asset</option>
-                                         {category.map((c) => (
-                                            <option key={c.name} value={c.name}>
+                                          <option value="">Choose Asset</option>
+                                          {categories.map((c) => (
+                                            <option key={c.id} value={c.id}>
                                               {c.name}
                                             </option>
                                           ))}
                                         </select>
                                       </div>
 
-                                      <div className="col-12 ">
-                                        <label for="inputAssetLocatioin" className="form-label">
-                                          Asset Location (LOCQRID)
-                                        </label>
+                                      <div className="col-12">
+                                        <label htmlFor="inputAssetLocation" className="form-label">Asset Location (LOCQRID)</label>
                                         <input
                                           type="text"
                                           className="form-control rounded-0"
-                                          id="inputAssetLocatioin"
-                                          autoComplete="off"
+                                          id="inputAssetLocation"
+                                          placeholder="Enter Asset Location"
                                           value={meter.asset_location}
                                           onChange={(e) =>
                                             setMeter({ ...meter, asset_location: e.target.value })
@@ -246,66 +231,41 @@ return (
                                       </div>
 
                                       <div className="col-12">
-                                        <label htmlFor="inputblock" className="form-label">
-                                            Block:
-                                        </label>
+                                        <label htmlFor="inputBlock" className="form-label">Block</label>
                                         <input
-                                            type="text"
-                                            className="form-control"
-                                            id="inputblock"
-                                            required
-                                            placeholder="Enter Block"
-                                            value={meter.block}
-                                            onChange={(e) =>
-                                                setMeter({ ...meter, block: e.target.value })
-                                            }
+                                          type="text"
+                                          className="form-control rounded-0"
+                                          id="inputBlock"
+                                          placeholder="Enter Block"
+                                          value={meter.block}
+                                          onChange={(e) =>
+                                            setMeter({ ...meter, block: e.target.value })
+                                          }
                                         />
                                       </div>
 
                                       <div className="col-12 mb-4">
-                                          <label htmlFor="inputlevel" className="form-label">
-                                              Level :
-                                          </label>
-                                          <input
-                                              type="text"
-                                              className="form-control"
-                                              id="inputlevel"
-                                              required
-                                              placeholder="Enter  Level"
-                                              value={meter.level}
-                                              onChange={(e) =>
-                                                  setMeter({ ...meter, level: e.target.value })
-                                              }
-                                          />
-                                      </div>
-
-                                      {/* <div className="col-12 mb-3">
-                                        <label className="form-label" for="inputGroupFile01">
-                                          Select Image
-                                        </label>
+                                        <label htmlFor="inputLevel" className="form-label">Level</label>
                                         <input
-                                          type="file"
-                                          // required
+                                          type="text"
                                           className="form-control rounded-0"
-                                          id="inputGroupFile01"
-                                          name="image"
-                                          // value={meter.image}
+                                          id="inputLevel"
+                                          placeholder="Enter Level"
+                                          value={meter.level}
                                           onChange={(e) =>
-                                            setMeter({ ...meter, image: e.target.files[0] })
+                                            setMeter({ ...meter, level: e.target.value })
                                           }
                                         />
-                                      </div> */}
+                                      </div>
 
                                       <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <button className="btn btn-success me-md-2" type="submit">
-                                          Save
-                                        </button>
+                                        <button className="btn btn-success me-md-2" type="submit">Update</button>
                                         <button
                                           className="btn btn-danger"
-                                          onClick={() => navigate(-1)}
                                           type="button"
+                                          onClick={() => navigate('/display')}
                                         >
-                                          Back
+                                          Cancel
                                         </button>
                                       </div>
                                     </form>
@@ -313,12 +273,14 @@ return (
                                 </div>
                               </div>
                             </div>
+                            <br />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <br />
               </div>
             </div>
           </div>
@@ -326,6 +288,6 @@ return (
       </div>
     </div>
   );
-};
+}
 
 export default EditMeter;
